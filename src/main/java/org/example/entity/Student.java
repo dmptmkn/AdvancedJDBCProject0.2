@@ -9,9 +9,9 @@ import java.time.LocalDate;
 @Builder
 public class Student {
 
-    private int id;
+    private Integer id;
     private String name;
-    private int age;
+    private Integer age;
     private LocalDate registrationDate;
 
 }

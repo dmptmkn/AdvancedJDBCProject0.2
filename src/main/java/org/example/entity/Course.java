@@ -7,14 +7,14 @@ import lombok.Data;
 @Builder
 public class Course {
 
-    private int id;
+    private Integer id;
     private String name;
-    private int duration;
+    private Integer duration;
     private CourseType type;
     private String description;
     private Teacher teacherId;
-    private int studentsCount;
-    private int price;
-    private double pricePerHour;
+    private Integer studentsCount;
+    private Integer price;
+    private Double pricePerHour;
 
 }
