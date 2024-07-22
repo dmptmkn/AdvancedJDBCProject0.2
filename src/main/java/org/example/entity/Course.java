@@ -15,6 +15,6 @@ public class Course {
     private Teacher teacherId;
     private Integer studentsCount;
     private Integer price;
-    private Double pricePerHour;
+    private Float pricePerHour;
 
 }

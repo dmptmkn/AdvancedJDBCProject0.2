@@ -42,7 +42,7 @@ public class CourseDaoImpl implements CourseDao {
             preparedStatement.setInt(5, course.getTeacherId().getId());
             preparedStatement.setInt(6, course.getStudentsCount());
             preparedStatement.setInt(7, course.getPrice());
-            preparedStatement.setFloat(8, (float) course.getPricePerHour());
+            preparedStatement.setFloat(8, course.getPricePerHour());
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -77,7 +77,7 @@ public class CourseDaoImpl implements CourseDao {
                                 .build())
                         .studentsCount(resultSet.getInt("c.students_count"))
                         .price(resultSet.getInt("c.price"))
-                        .pricePerHour(resultSet.getInt("c.price_per_hour"))
+                        .pricePerHour(resultSet.getFloat("c.price_per_hour"))
                         .build();
                 courses.add(nextCourse);
             }
