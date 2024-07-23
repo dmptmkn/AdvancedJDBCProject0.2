@@ -1,5 +1,6 @@
 package org.example.dao;
 
+import lombok.SneakyThrows;
 import org.example.entity.Course;
 import org.example.entity.CourseType;
 import org.example.entity.Teacher;
@@ -8,13 +9,51 @@ import org.example.util.ConnectionManager;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class CourseDaoImpl implements CourseDao {
 
     private static CourseDaoImpl instance;
+
+    private static final String SAVE_QUERY = """
+            INSERT INTO courses (name, duration, type, description, teacher_id, students_count, price, price_per_hour)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            """;
+    private static final String FIND_ALL_QUERY = """
+            SELECT *
+            FROM courses AS c
+                     JOIN teachers AS t on t.id = c.teacher_id
+            """;
+    private static final String FIND_BY_ID_QUERY = FIND_ALL_QUERY + """
+            WHERE c.id = ?
+            """;
+    private static final String UPDATE_QUERY = """
+            UPDATE courses
+            SET name           = ?,
+                duration       = ?,
+                type           = ?,
+                description    = ?,
+                teacher_id     = ?,
+                students_count = ?,
+                price          = ?,
+                price_per_hour = ?
+            WHERE id = ?
+            """;
+    private static final String UPDATE_PRICE_AND_TYPE_QUERY = """
+            UPDATE courses
+            SET type  = ?,
+                price = ?
+            WHERE id = ?
+            """;
+    private static final String DELETE_QUERY = """
+            DELETE FROM courses
+            WHERE id = ?
+            """;
+    private static final String DELETE_BY_DURATION_QUERY = """
+            DELETE FROM courses
+            WHERE duration = ?
+            """;
 
     private CourseDaoImpl() {
     }
@@ -27,14 +66,10 @@ public class CourseDaoImpl implements CourseDao {
     }
 
     @Override
+    @SneakyThrows
     public void save(Course course) {
-        String sqlQuery = """
-                INSERT INTO courses (name, duration, type, description, teacher_id, students_count, price, price_per_hour)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-                """;
-
         try (Connection connection = ConnectionManager.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery)) {
+             PreparedStatement preparedStatement = connection.prepareStatement(SAVE_QUERY)) {
             preparedStatement.setString(1, course.getName());
             preparedStatement.setInt(2, course.getDuration());
             preparedStatement.setString(3, course.getType().name());
@@ -44,83 +79,108 @@ public class CourseDaoImpl implements CourseDao {
             preparedStatement.setInt(7, course.getPrice());
             preparedStatement.setFloat(8, course.getPricePerHour());
             preparedStatement.executeUpdate();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
         }
     }
 
     @Override
-    public List<Course> findAll() {
-        String sqlQuery = """
-                SELECT *
-                FROM courses AS c
-                         JOIN teachers AS t on t.id = c.teacher_id
-                WHERE c.duration >= 30
-                """;
+    @SneakyThrows
+    public Course findById(Integer id) {
+        Course course = null;
+        try (Connection connection = ConnectionManager.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(FIND_BY_ID_QUERY);
+             ResultSet resultSet = preparedStatement.executeQuery()) {
+            preparedStatement.setInt(1, id);
+            if (resultSet.next()) {
+                course = buildCourse(resultSet);
+            }
+        }
 
+        return course;
+    }
+
+    @Override
+    @SneakyThrows
+    public List<Course> findAll() {
         List<Course> courses = new ArrayList<>();
         try (Connection connection = ConnectionManager.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery);
+             PreparedStatement preparedStatement = connection.prepareStatement(FIND_ALL_QUERY);
              ResultSet resultSet = preparedStatement.executeQuery()) {
             while (resultSet.next()) {
-                Course nextCourse = Course.builder()
-                        .id(resultSet.getInt("c.id"))
-                        .name(resultSet.getString("c.name"))
-                        .duration(resultSet.getInt("c.duration"))
-                        .type(CourseType.valueOf(resultSet.getString("c.type")))
-                        .description(resultSet.getString("c.description"))
-                        .teacherId(Teacher.builder()
-                                .id(resultSet.getInt("t.id"))
-                                .name(resultSet.getString("t.name"))
-                                .salary(resultSet.getInt("t.salary"))
-                                .age(resultSet.getInt("t.age"))
-                                .build())
-                        .studentsCount(resultSet.getInt("c.students_count"))
-                        .price(resultSet.getInt("c.price"))
-                        .pricePerHour(resultSet.getFloat("c.price_per_hour"))
-                        .build();
+                Course nextCourse = buildCourse(resultSet);
                 courses.add(nextCourse);
             }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
         }
 
         return courses;
     }
 
     @Override
-    public void update(int id, int price, CourseType courseType) {
-        String sqlQuery = """
-                UPDATE courses
-                SET type  = ?,
-                    price = ?
-                WHERE id = ?
-                """;
-
+    @SneakyThrows
+    public void update(Integer id, Course course) {
         try (Connection connection = ConnectionManager.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery)) {
-            preparedStatement.setString(1, courseType.name());
-            preparedStatement.setInt(2, price);
-            preparedStatement.setInt(3, id);
+             PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_QUERY)) {
+            preparedStatement.setString(1, course.getName());
+            preparedStatement.setInt(2, course.getDuration());
+            preparedStatement.setString(3, course.getType().name());
+            preparedStatement.setString(4, course.getDescription());
+            preparedStatement.setInt(5, course.getTeacherId().getId());
+            preparedStatement.setInt(6, course.getStudentsCount());
+            preparedStatement.setInt(7, course.getPrice());
+            preparedStatement.setFloat(8, course.getPricePerHour());
+            preparedStatement.setInt(9, id);
             preparedStatement.executeUpdate();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
         }
     }
 
     @Override
-    public void delete(int duration) {
-        String sqlQuery = """
-                DELETE FROM courses
-                WHERE duration = ?
-                """;
-
+    @SneakyThrows
+    public void updatePriceAndType(Integer id, Integer price, CourseType courseType) {
         try (Connection connection = ConnectionManager.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery)) {
+             PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_PRICE_AND_TYPE_QUERY)) {
+            preparedStatement.setString(1, courseType.name());
+            preparedStatement.setInt(2, price);
+            preparedStatement.setInt(3, id);
+            preparedStatement.executeUpdate();
+        }
+    }
+
+    @Override
+    @SneakyThrows
+    public void delete(Integer id) {
+        try (Connection connection = ConnectionManager.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(DELETE_QUERY)) {
+            preparedStatement.setInt(1, id);
+            preparedStatement.executeUpdate();
+        }
+    }
+
+    @Override
+    @SneakyThrows
+    public void deleteByDuration(Integer duration) {
+        try (Connection connection = ConnectionManager.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(DELETE_BY_DURATION_QUERY)) {
             preparedStatement.setInt(1, duration);
             preparedStatement.executeUpdate();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
         }
+    }
+
+    @SneakyThrows
+    private Course buildCourse(ResultSet resultSet) {
+        return Course.builder()
+                .id(resultSet.getInt("c.id"))
+                .name(resultSet.getString("c.name"))
+                .duration(resultSet.getInt("c.duration"))
+                .type(CourseType.valueOf(resultSet.getString("c.type")))
+                .description(resultSet.getString("c.description"))
+                .teacherId(Teacher.builder()
+                        .id(resultSet.getInt("t.id"))
+                        .name(resultSet.getString("t.name"))
+                        .salary(resultSet.getInt("t.salary"))
+                        .age(resultSet.getInt("t.age"))
+                        .build())
+                .studentsCount(resultSet.getInt("c.students_count"))
+                .price(resultSet.getInt("c.price"))
+                .pricePerHour(resultSet.getFloat("c.price_per_hour"))
+                .build();
     }
 }
