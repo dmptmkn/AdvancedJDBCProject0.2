@@ -51,6 +51,8 @@ public class StudentDaoImpl implements StudentDao {
     @Override
     @SneakyThrows
     public void save(Student student) {
+        if (student == null) throw new IllegalArgumentException();
+
         try (Connection connection = ConnectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(SAVE_QUERY)) {
             preparedStatement.setString(1, student.getName());
@@ -63,6 +65,8 @@ public class StudentDaoImpl implements StudentDao {
     @Override
     @SneakyThrows
     public Student findById(Integer id) {
+        if (id == null || id < 1) throw new IllegalArgumentException();
+
         Student student = null;
         try (Connection connection = ConnectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(FIND_BY_ID_QUERY);
@@ -95,6 +99,8 @@ public class StudentDaoImpl implements StudentDao {
     @Override
     @SneakyThrows
     public void update(Integer id, Student student) {
+        if (id == null || id < 1 || student == null) throw new IllegalArgumentException();
+
         try (Connection connection = ConnectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_QUERY)) {
             preparedStatement.setString(1, student.getName());
@@ -108,6 +114,8 @@ public class StudentDaoImpl implements StudentDao {
     @Override
     @SneakyThrows
     public void delete(Integer id) {
+        if (id == null || id < 1) throw new IllegalArgumentException();
+
         try (Connection connection = ConnectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(DELETE_QUERY)) {
             preparedStatement.setInt(1, id);
