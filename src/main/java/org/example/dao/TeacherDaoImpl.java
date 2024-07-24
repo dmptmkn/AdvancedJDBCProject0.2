@@ -49,6 +49,8 @@ public class TeacherDaoImpl implements TeacherDao {
     @Override
     @SneakyThrows
     public void save(Teacher teacher) {
+        if (teacher == null) throw new IllegalArgumentException();
+
         try (Connection connection = ConnectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(SAVE_QUERY)) {
             preparedStatement.setString(1, teacher.getName());
@@ -61,6 +63,8 @@ public class TeacherDaoImpl implements TeacherDao {
     @Override
     @SneakyThrows
     public Teacher findById(Integer id) {
+        if (id == null || id < 1) throw new IllegalArgumentException();
+
         Teacher teacher = null;
         try (Connection connection = ConnectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(FIND_BY_ID_QUERY);
@@ -93,6 +97,8 @@ public class TeacherDaoImpl implements TeacherDao {
     @Override
     @SneakyThrows
     public void update(Integer id, Teacher teacher) {
+        if (id == null || id < 1 || teacher == null) throw new IllegalArgumentException();
+
         try (Connection connection = ConnectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_QUERY)) {
             preparedStatement.setString(1, teacher.getName());
@@ -106,6 +112,8 @@ public class TeacherDaoImpl implements TeacherDao {
     @Override
     @SneakyThrows
     public void delete(Integer id) {
+        if (id == null || id < 1) throw new IllegalArgumentException();
+
         try (Connection connection = ConnectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(DELETE_QUERY)) {
             preparedStatement.setInt(1, id);
