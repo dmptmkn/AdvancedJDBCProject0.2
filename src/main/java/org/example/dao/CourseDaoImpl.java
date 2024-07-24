@@ -68,6 +68,8 @@ public class CourseDaoImpl implements CourseDao {
     @Override
     @SneakyThrows
     public void save(Course course) {
+        if (course == null) throw new IllegalArgumentException();
+
         try (Connection connection = ConnectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(SAVE_QUERY)) {
             preparedStatement.setString(1, course.getName());
@@ -85,6 +87,8 @@ public class CourseDaoImpl implements CourseDao {
     @Override
     @SneakyThrows
     public Course findById(Integer id) {
+        if (id == null || id < 1) throw new IllegalArgumentException();
+
         Course course = null;
         try (Connection connection = ConnectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(FIND_BY_ID_QUERY);
@@ -117,6 +121,8 @@ public class CourseDaoImpl implements CourseDao {
     @Override
     @SneakyThrows
     public void update(Integer id, Course course) {
+        if (id == null || id < 1 || course == null) throw new IllegalArgumentException();
+
         try (Connection connection = ConnectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_QUERY)) {
             preparedStatement.setString(1, course.getName());
@@ -135,6 +141,8 @@ public class CourseDaoImpl implements CourseDao {
     @Override
     @SneakyThrows
     public void updatePriceAndType(Integer id, Integer price, CourseType courseType) {
+        if (id == null || id < 1 || price == null || price < 0 || courseType == null) throw new IllegalArgumentException();
+
         try (Connection connection = ConnectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_PRICE_AND_TYPE_QUERY)) {
             preparedStatement.setString(1, courseType.name());
@@ -147,6 +155,8 @@ public class CourseDaoImpl implements CourseDao {
     @Override
     @SneakyThrows
     public void delete(Integer id) {
+        if (id == null || id < 1) throw new IllegalArgumentException();
+
         try (Connection connection = ConnectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(DELETE_QUERY)) {
             preparedStatement.setInt(1, id);
@@ -157,6 +167,8 @@ public class CourseDaoImpl implements CourseDao {
     @Override
     @SneakyThrows
     public void deleteByDuration(Integer duration) {
+        if (duration == null || duration < 1) throw new IllegalArgumentException();
+
         try (Connection connection = ConnectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(DELETE_BY_DURATION_QUERY)) {
             preparedStatement.setInt(1, duration);
