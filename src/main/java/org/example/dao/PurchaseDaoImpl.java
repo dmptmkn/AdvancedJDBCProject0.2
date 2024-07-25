@@ -22,7 +22,7 @@ public class PurchaseDaoImpl implements PurchaseDao {
             VALUES (?, ?, ?, ?)
             """;
     private static final String FIND_ALL_QUERY = """
-            SELECT *
+            SELECT * 
             FROM purchaseList
             """;
     private static final String FIND_BY_ID_QUERY = FIND_ALL_QUERY + """
@@ -96,8 +96,10 @@ public class PurchaseDaoImpl implements PurchaseDao {
         try (Connection connection = ConnectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(FIND_ALL_QUERY);
              ResultSet resultSet = preparedStatement.executeQuery()) {
-            Purchase nextPurchase = buildPurchase(resultSet);
-            purchases.add(nextPurchase);
+            while (resultSet.next()) {
+                Purchase nextPurchase = buildPurchase(resultSet);
+                purchases.add(nextPurchase);
+            }
         }
 
         return purchases;
