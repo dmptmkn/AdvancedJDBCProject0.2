@@ -9,6 +9,7 @@ import java.time.LocalDate;
 @Builder
 public class Subscription {
 
+    private SubscriptionPrimaryKey id;
     private Student studentId;
     private Course courseId;
     private LocalDate subscriptionDate;
