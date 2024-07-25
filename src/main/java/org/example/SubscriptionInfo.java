@@ -15,7 +15,7 @@ public class SubscriptionInfo {
     }
 
     public int getDesignStudentAverageAge() {
-        return (int) SubscriptionDaoImpl.getInstance().findAll().stream()
+        return (int) subscriptions.stream()
                 .filter(s -> s.getCourseId().getType() == CourseType.DESIGN)
                 .map(Subscription::getStudentId)
                 .mapToInt(Student::getAge)
