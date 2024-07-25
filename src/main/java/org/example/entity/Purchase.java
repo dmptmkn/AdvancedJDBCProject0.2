@@ -9,8 +9,9 @@ import java.time.LocalDate;
 @Builder
 public class Purchase {
 
-    private Student studentName;
-    private Course courseName;
+    private PurchasePrimaryKey id;
+    private String studentName;
+    private String courseName;
     private Integer price;
     private LocalDate subscriptionDate;
 
