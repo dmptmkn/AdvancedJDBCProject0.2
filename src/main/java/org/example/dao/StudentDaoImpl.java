@@ -21,22 +21,23 @@ public class StudentDaoImpl implements StudentDao {
             VALUES (?, ?, ?)
             """;
     private static final String FIND_ALL_QUERY = """
-            SELECT * FROM students
+            SELECT *
+            FROM students
             """;
     private static final String FIND_BY_ID_QUERY = FIND_ALL_QUERY + """
             WHERE id = ?
             """;
     private static final String UPDATE_QUERY = """
-                UPDATE students
-                SET name              = ?,
-                    age               = ?,
-                    registration_date = ?
-                WHERE id = ?
-                """;
+            UPDATE students
+            SET name              = ?,
+                age               = ?,
+                registration_date = ?
+            WHERE id = ?
+            """;
     private static final String DELETE_QUERY = """
-                DELETE FROM students
-                WHERE id = ?
-                """;
+            DELETE FROM students
+            WHERE id = ?
+            """;
 
     private StudentDaoImpl() {
     }

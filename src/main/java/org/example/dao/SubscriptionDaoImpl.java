@@ -14,33 +14,33 @@ public class SubscriptionDaoImpl implements SubscriptionDao {
     private static SubscriptionDaoImpl instance;
 
     private static final String SAVE_QUERY = """
-                INSERT INTO subscriptions (student_id, course_id, subscription_date)
-                VALUES (?, ?, ?)
-                """;
+            INSERT INTO subscriptions (student_id, course_id, subscription_date)
+            VALUES (?, ?, ?)
+            """;
     private static final String FIND_ALL_QUERY = """
-                SELECT *
-                FROM subscriptions AS sub
-                         JOIN courses AS c on c.id = sub.course_id
-                         JOIN teachers AS t on t.id = c.teacher_id
-                         JOIN students AS s on s.id = sub.student_id
-                """;
+            SELECT *
+            FROM subscriptions AS sub
+                     JOIN courses AS c on c.id = sub.course_id
+                     JOIN teachers AS t on t.id = c.teacher_id
+                     JOIN students AS s on s.id = sub.student_id
+            """;
     private static final String FIND_BY_ID_QUERY = FIND_ALL_QUERY + """
             WHERE s.id = ? AND c.id = ?
             """;
     private static final String UPDATE_QUERY = """
-                UPDATE subscriptions
-                SET student_id        = ?,
-                    course_id         = ?,
-                    subscription_date = ?
-                WHERE student_id = ?
-                  AND course_id = ?
-                """;
+            UPDATE subscriptions
+            SET student_id        = ?,
+                course_id         = ?,
+                subscription_date = ?
+            WHERE student_id = ?
+              AND course_id = ?
+            """;
     private static final String DELETE_QUERY = """
-                DELETE
-                FROM subscriptions
-                WHERE student_id = ?
-                  AND course_id = ?
-                """;
+            DELETE
+            FROM subscriptions
+            WHERE student_id = ?
+              AND course_id = ?
+            """;
 
     private SubscriptionDaoImpl() {
     }
@@ -127,7 +127,7 @@ public class SubscriptionDaoImpl implements SubscriptionDao {
             preparedStatement.executeUpdate();
         }
     }
-    
+
     @SneakyThrows
     private Subscription buildSubscription(ResultSet resultSet) {
         return Subscription.builder()

@@ -47,11 +47,13 @@ public class CourseDaoImpl implements CourseDao {
             WHERE id = ?
             """;
     private static final String DELETE_QUERY = """
-            DELETE FROM courses
+            DELETE
+            FROM courses
             WHERE id = ?
             """;
     private static final String DELETE_BY_DURATION_QUERY = """
-            DELETE FROM courses
+            DELETE
+            FROM courses
             WHERE duration = ?
             """;
 

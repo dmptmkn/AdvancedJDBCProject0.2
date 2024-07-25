@@ -19,22 +19,23 @@ public class TeacherDaoImpl implements TeacherDao {
             VALUES (?, ?, ?)
             """;
     private static final String FIND_ALL_QUERY = """
-            SELECT * FROM teachers
+            SELECT *
+            FROM teachers
             """;
     private static final String FIND_BY_ID_QUERY = FIND_ALL_QUERY + """
             WHERE id = ?
             """;
     private static final String UPDATE_QUERY = """
-                UPDATE teachers
-                SET name   = ?,
-                    salary = ?,
-                    age    = ?
-                WHERE id = ?
-                """;
+            UPDATE teachers
+            SET name   = ?,
+                salary = ?,
+                age    = ?
+            WHERE id = ?
+            """;
     private static final String DELETE_QUERY = """
-                DELETE FROM teachers
-                WHERE id = ?
-                """;
+            DELETE FROM teachers
+            WHERE id = ?
+            """;
 
     private TeacherDaoImpl() {
     }
