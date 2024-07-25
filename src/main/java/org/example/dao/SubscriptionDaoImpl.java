@@ -24,12 +24,8 @@ public class SubscriptionDaoImpl implements SubscriptionDao {
                          JOIN teachers AS t on t.id = c.teacher_id
                          JOIN students AS s on s.id = sub.student_id
                 """;
-    private static final String FIND_QUERY = FIND_ALL_QUERY + """
-            WHERE s.id = ? AND c.id = ?
-            """;
     private static final String FIND_BY_ID_QUERY = FIND_ALL_QUERY + """
-            WHERE s.id = ?
-            LIMIT 1
+            WHERE s.id = ? AND c.id = ?
             """;
     private static final String UPDATE_QUERY = """
                 UPDATE subscriptions
@@ -69,29 +65,13 @@ public class SubscriptionDaoImpl implements SubscriptionDao {
 
     @Override
     @SneakyThrows
-    public Subscription find(Student student, Course course) {
-        Subscription subscription = null;
-        try (Connection connection = ConnectionManager.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(FIND_QUERY);
-             ResultSet resultSet = preparedStatement.executeQuery()) {
-            preparedStatement.setInt(1, student.getId());
-            preparedStatement.setInt(2, course.getId());
-            if (resultSet.next()) {
-                subscription = buildSubscription(resultSet);
-            }
-        }
-
-        return subscription;
-    }
-
-    @Override
-    @SneakyThrows
-    public Subscription findById(Student id) {
+    public Subscription findById(SubscriptionPrimaryKey id) {
         Subscription subscription = null;
         try (Connection connection = ConnectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(FIND_BY_ID_QUERY);
              ResultSet resultSet = preparedStatement.executeQuery()) {
-            preparedStatement.setInt(1, id.getId());
+            preparedStatement.setInt(1, id.studentId());
+            preparedStatement.setInt(2, id.courseId());
             if (resultSet.next()) {
                 subscription = buildSubscription(resultSet);
             }
@@ -116,34 +96,26 @@ public class SubscriptionDaoImpl implements SubscriptionDao {
     }
 
     @Override
-    public void update(Student id, Subscription entity) {
-    }
-
-    @Override
     @SneakyThrows
-    public void update(Student student, Course course, Subscription subscription) {
+    public void update(SubscriptionPrimaryKey id, Subscription subscription) {
         try (Connection connection = ConnectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_QUERY)) {
             preparedStatement.setInt(1, subscription.getStudentId().getId());
             preparedStatement.setInt(2, subscription.getCourseId().getId());
             preparedStatement.setDate(3, Date.valueOf(subscription.getSubscriptionDate()));
-            preparedStatement.setInt(4, student.getId());
-            preparedStatement.setInt(5, course.getId());
+            preparedStatement.setInt(1, id.studentId());
+            preparedStatement.setInt(2, id.courseId());
             preparedStatement.executeUpdate();
         }
     }
 
     @Override
-    public void delete(Student id) {
-    }
-
-    @Override
     @SneakyThrows
-    public void delete(Student student, Course course) {
+    public void delete(SubscriptionPrimaryKey id) {
         try (Connection connection = ConnectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(DELETE_QUERY)) {
-            preparedStatement.setInt(1, student.getId());
-            preparedStatement.setInt(2, course.getId());
+            preparedStatement.setInt(1, id.studentId());
+            preparedStatement.setInt(2, id.courseId());
             preparedStatement.executeUpdate();
         }
     }
@@ -151,6 +123,7 @@ public class SubscriptionDaoImpl implements SubscriptionDao {
     @SneakyThrows
     private Subscription buildSubscription(ResultSet resultSet) {
         return Subscription.builder()
+                .id(new SubscriptionPrimaryKey(resultSet.getInt("s.id"), resultSet.getInt("c.id")))
                 .studentId(Student.builder()
                         .id(resultSet.getInt("s.id"))
                         .name(resultSet.getString("s.name"))
