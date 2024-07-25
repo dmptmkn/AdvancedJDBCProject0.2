@@ -55,6 +55,8 @@ public class SubscriptionDaoImpl implements SubscriptionDao {
     @Override
     @SneakyThrows
     public void save(Subscription subscription) {
+        if (subscription == null) throw new IllegalArgumentException();
+
         try (Connection connection = ConnectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(SAVE_QUERY)) {
             preparedStatement.setInt(1, subscription.getStudentId().getId());
@@ -66,6 +68,8 @@ public class SubscriptionDaoImpl implements SubscriptionDao {
     @Override
     @SneakyThrows
     public Subscription findById(SubscriptionPrimaryKey id) {
+        if (id == null) throw new IllegalArgumentException();
+
         Subscription subscription = null;
         try (Connection connection = ConnectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(FIND_BY_ID_QUERY);
@@ -98,6 +102,8 @@ public class SubscriptionDaoImpl implements SubscriptionDao {
     @Override
     @SneakyThrows
     public void update(SubscriptionPrimaryKey id, Subscription subscription) {
+        if (id == null || subscription == null) throw new IllegalArgumentException();
+
         try (Connection connection = ConnectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_QUERY)) {
             preparedStatement.setInt(1, subscription.getStudentId().getId());
@@ -112,6 +118,8 @@ public class SubscriptionDaoImpl implements SubscriptionDao {
     @Override
     @SneakyThrows
     public void delete(SubscriptionPrimaryKey id) {
+        if (id == null) throw new IllegalArgumentException();
+
         try (Connection connection = ConnectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(DELETE_QUERY)) {
             preparedStatement.setInt(1, id.studentId());
