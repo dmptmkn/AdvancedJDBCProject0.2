@@ -93,9 +93,9 @@ public class CourseDaoImpl implements CourseDao {
 
         Course course = null;
         try (Connection connection = ConnectionManager.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(FIND_BY_ID_QUERY);
-             ResultSet resultSet = preparedStatement.executeQuery()) {
+             PreparedStatement preparedStatement = connection.prepareStatement(FIND_BY_ID_QUERY)) {
             preparedStatement.setInt(1, id);
+            ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
                 course = buildCourse(resultSet);
             }

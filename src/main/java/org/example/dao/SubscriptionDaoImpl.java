@@ -72,8 +72,8 @@ public class SubscriptionDaoImpl implements SubscriptionDao {
 
         Subscription subscription = null;
         try (Connection connection = ConnectionManager.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(FIND_BY_ID_QUERY);
-             ResultSet resultSet = preparedStatement.executeQuery()) {
+             PreparedStatement preparedStatement = connection.prepareStatement(FIND_BY_ID_QUERY)) {
+            ResultSet resultSet = preparedStatement.executeQuery();
             preparedStatement.setInt(1, id.studentId());
             preparedStatement.setInt(2, id.courseId());
             if (resultSet.next()) {

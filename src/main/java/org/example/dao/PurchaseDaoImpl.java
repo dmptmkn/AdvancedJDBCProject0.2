@@ -77,8 +77,8 @@ public class PurchaseDaoImpl implements PurchaseDao {
 
         Purchase purchase = null;
         try (Connection connection = ConnectionManager.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(FIND_BY_ID_QUERY);
-             ResultSet resultSet = preparedStatement.executeQuery()) {
+             PreparedStatement preparedStatement = connection.prepareStatement(FIND_BY_ID_QUERY)) {
+            ResultSet resultSet = preparedStatement.executeQuery();
             preparedStatement.setString(1, id.studentName());
             preparedStatement.setString(2, id.courseName());
             if (resultSet.next()) {

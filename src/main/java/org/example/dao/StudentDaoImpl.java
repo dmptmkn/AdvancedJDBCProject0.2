@@ -70,8 +70,8 @@ public class StudentDaoImpl implements StudentDao {
 
         Student student = null;
         try (Connection connection = ConnectionManager.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(FIND_BY_ID_QUERY);
-             ResultSet resultSet = preparedStatement.executeQuery()) {
+             PreparedStatement preparedStatement = connection.prepareStatement(FIND_BY_ID_QUERY)) {
+            ResultSet resultSet = preparedStatement.executeQuery();
             preparedStatement.setInt(1, id);
             if (resultSet.next()) {
                 student = buildStudent(resultSet);
