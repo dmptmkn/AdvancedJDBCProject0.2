@@ -39,9 +39,6 @@ public class StudentDaoImpl implements StudentDao {
             WHERE id = ?
             """;
 
-    private StudentDaoImpl() {
-    }
-
     public static StudentDaoImpl getInstance() {
         if (instance == null) {
             instance = new StudentDaoImpl();

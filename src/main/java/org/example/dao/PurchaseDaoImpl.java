@@ -1,5 +1,7 @@
 package org.example.dao;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
 import org.example.entity.Purchase;
 import org.example.entity.PurchasePrimaryKey;
@@ -13,6 +15,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class PurchaseDaoImpl implements PurchaseDao {
 
     private static PurchaseDaoImpl instance;
@@ -44,9 +47,6 @@ public class PurchaseDaoImpl implements PurchaseDao {
             WHERE student_name = ?
               AND course_name = ?
             """;
-
-    private PurchaseDaoImpl() {
-    }
 
     public static PurchaseDaoImpl getInstance() {
         if (instance == null) {

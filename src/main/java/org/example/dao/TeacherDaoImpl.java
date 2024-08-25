@@ -1,5 +1,7 @@
 package org.example.dao;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
 import org.example.entity.Teacher;
 import org.example.util.ConnectionManager;
@@ -10,6 +12,7 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class TeacherDaoImpl implements TeacherDao {
 
     private static TeacherDaoImpl instance;
@@ -36,9 +39,6 @@ public class TeacherDaoImpl implements TeacherDao {
             DELETE FROM teachers
             WHERE id = ?
             """;
-
-    private TeacherDaoImpl() {
-    }
 
     public static TeacherDaoImpl getInstance() {
         if (instance == null) {

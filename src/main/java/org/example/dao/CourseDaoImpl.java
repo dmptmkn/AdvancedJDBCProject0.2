@@ -1,5 +1,7 @@
 package org.example.dao;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
 import org.example.entity.Course;
 import org.example.entity.CourseType;
@@ -12,6 +14,7 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class CourseDaoImpl implements CourseDao {
 
     private static CourseDaoImpl instance;
@@ -56,9 +59,6 @@ public class CourseDaoImpl implements CourseDao {
             FROM courses
             WHERE duration = ?
             """;
-
-    private CourseDaoImpl() {
-    }
 
     public static CourseDaoImpl getInstance() {
         if (instance == null) {

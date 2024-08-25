@@ -1,5 +1,7 @@
 package org.example.dao;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
 import org.example.entity.*;
 import org.example.util.ConnectionManager;
@@ -9,6 +11,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class SubscriptionDaoImpl implements SubscriptionDao {
 
     private static SubscriptionDaoImpl instance;
@@ -41,9 +44,6 @@ public class SubscriptionDaoImpl implements SubscriptionDao {
             WHERE student_id = ?
               AND course_id = ?
             """;
-
-    private SubscriptionDaoImpl() {
-    }
 
     public static SubscriptionDaoImpl getInstance() {
         if (instance == null) {
